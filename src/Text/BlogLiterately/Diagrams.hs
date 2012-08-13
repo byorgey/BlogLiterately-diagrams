@@ -13,7 +13,7 @@
 -----------------------------------------------------------------------------
 
 module Text.BlogLiterately.Diagrams
-    ( diagramsXF
+    ( diagramsXF, diagramsInlineXF
     ) where
 
 import           Control.Arrow
@@ -21,6 +21,7 @@ import           Data.List        (isPrefixOf)
 import qualified Data.Map as M
 import           Safe             (readMay, headDef)
 import           System.FilePath
+import           System.IO        (stderr, hPutStrLn)
 
 import           Diagrams.Backend.Cairo
 import           Diagrams.Backend.Cairo.Internal
@@ -48,10 +49,19 @@ import           Text.Pandoc
 --   'Text.BlogLiterately.Transform.centerImagesXF' (which, of course,
 --   should be placed after @diagramsXF@ in the pipeline).
 diagramsXF :: Transform
-diagramsXF = Transform (\bl -> Kleisli $ renderDiagrams bl) (const True)
+diagramsXF = Transform (\bl -> Kleisli $ renderBlockDiagrams bl) (const True)
 
-renderDiagrams :: BlogLiterately -> Pandoc -> IO Pandoc
-renderDiagrams _ p = bottomUpM (renderDiagram defs) p
+renderBlockDiagrams :: BlogLiterately -> Pandoc -> IO Pandoc
+renderBlockDiagrams _ p = bottomUpM (renderBlockDiagram defs) p
+  where
+    defs = queryWith extractDiaDef p
+
+-- | XXX be sure to run this *before* 'diagramsXF'.
+diagramsInlineXF :: Transform
+diagramsInlineXF = Transform (\bl -> Kleisli $ renderInlineDiagrams bl) (const True)
+
+renderInlineDiagrams :: BlogLiterately -> Pandoc -> IO Pandoc
+renderInlineDiagrams _ p = bottomUpM (renderInlineDiagram defs) p
   where
     defs = queryWith extractDiaDef p
 
@@ -65,51 +75,73 @@ extractDiaDef b = []
 
 diaDir = "diagrams"  -- XXX make this configurable
 
-renderDiagram :: [String] -> Block -> IO Block
-renderDiagram defs c@(CodeBlock (_, as, _) s)
+-- | Given some code with declarations, some attributes, and an
+--   expression to render, render it and return the filename of the
+--   generated image (or an error message).
+--
+--   XXX note 'r' class attribute forces recompile
+renderDiagram :: [String]     -- ^ Declarations
+              -> String       -- ^ Expression to render
+              -> Attr         -- ^ Code attributes
+              -> IO (Either String FilePath)
+renderDiagram decls expr (ident, cls, fields) = do
+    res <- buildDiagram
+           Cairo
+           (zeroV :: R2)
+           (CairoOptions "default.png" size PNG)
+           decls
+           expr
+           []
+           ["Diagrams.Backend.Cairo"]
+           (hashedRegenerate
+             (\hash opts -> opts { cairoFileName = mkFile hash })
+             diaDir
+           )
+    case res of
+      ParseErr err    -> do
+        let errStr = "\nParse error:\n" ++ err
+        putErrLn errStr
+        return (Left errStr)
+      InterpErr ierr  -> do
+        let errStr = "\nInterpreter error:\n" ++ ppInterpError ierr
+        putErrLn errStr
+        return (Left errStr)
+      Skipped hash    ->        return (Right $ mkFile hash)
+      OK hash (act,_) -> act >> return (Right $ mkFile hash)
+
+  where
+    size        = mkSizeSpec
+                    (lookup "width" fields >>= readMay)
+                    (lookup "height" fields >>= readMay)
+    mkFile base = diaDir </> base <.> "png"
+
+renderBlockDiagram :: [String] -> Block -> IO Block
+renderBlockDiagram defs c@(CodeBlock attr@(_, cls, _) s)
     | "dia-def" `elem` tags = return Null
-    | "dia" `elem` tags = do
-        res <- buildDiagram
-                 Cairo
-                 (zeroV :: R2)
-                 (CairoOptions "default.png" size PNG)
-                 (src : defs)
-                 "pad 1.1 dia"
-                 []
-                 ["Diagrams.Backend.Cairo"]
-                 (hashedRegenerate
-                    (\hash opts -> opts { cairoFileName = mkFile hash })
-                    diaDir
-                 )
+    | "dia"     `elem` tags = do
+        res <- renderDiagram (src : defs) "pad 1.1 dia" attr
         case res of
-          ParseErr err    -> do putStrLn ("\nError while parsing\n" ++ src)
-                                putStrLn err
-                                return c
-          InterpErr ierr  -> do putStrLn ("\nError while interpreting\n" ++ src)
-                                putStrLn (ppInterpError ierr)
-                                return c
-          Skipped hash    -> return $ mkImageBlock hash
-          OK hash (act,_) -> act >> (return $ mkImageBlock hash)
+          Left  err  -> return c  -- XXX format error message?
+          Right file -> return $ Para [Image [] (file, "")]
 
     | otherwise = return c
+
   where
     (tag, src)        = unTag s
-    firstLine         = headDef "" $ lines src
-    fields
-      | "{-" `isPrefixOf` firstLine
-        = M.fromList
-        . map (second (drop 1) . break (==':'))
-        . filter (':' `elem`)
-        . words
-        . drop 2
-        $ firstLine
-      | otherwise
-        = M.empty
-    tags              = (maybe id (:) tag) as
-    size              = mkSizeSpec
-                          (M.lookup "width" fields >>= readMay)
-                          (M.lookup "height" fields >>= readMay)
-    mkFile base       = diaDir </> base <.> "png"
-    mkImageBlock hash = Para [Image [] (mkFile hash, "")]
+    tags              = (maybe id (:) tag) cls
 
-renderDiagram _ b = return b
+renderBlockDiagram _ b = return b
+
+renderInlineDiagram :: [String] -> Inline -> IO Inline
+renderInlineDiagram defs c@(Code attr@(_, cls, _) expr)
+    | "dia" `elem` cls = do
+        res <- renderDiagram defs expr attr
+        case res of
+          Left err   -> return (Code attr (expr ++ err))
+          Right file -> return $ Image [] (file, "")
+    | otherwise = return c
+
+renderInlineDiagram _ i = return i
+
+putErrLn :: String -> IO ()
+putErrLn = hPutStrLn stderr
