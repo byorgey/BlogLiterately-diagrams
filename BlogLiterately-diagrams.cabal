@@ -20,11 +20,11 @@ library
   exposed-modules:     Text.BlogLiterately.Diagrams
   build-depends:       base >= 4.3 && < 4.6,
                        containers,
-                       filepath, 
-                       diagrams-cairo >= 0.5 && < 0.6, 
-                       diagrams-builder ==0.2.*, 
-                       diagrams-lib ==0.5.*, 
-                       BlogLiterately ==0.5.*, 
+                       filepath,
+                       diagrams-cairo >= 0.5 && < 0.6,
+                       diagrams-builder ==0.2.*,
+                       diagrams-lib ==0.5.*,
+                       BlogLiterately ==0.5.*,
                        pandoc ==1.9.*,
                        safe ==0.3.*
   hs-source-dirs:      src
