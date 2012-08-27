@@ -28,3 +28,11 @@ library
                        pandoc ==1.9.*,
                        safe ==0.3.*
   hs-source-dirs:      src
+
+executable BlogLiteratelyD
+  build-depends:       base,
+                       BlogLiterately >= 0.5.2 && < 0.6,
+                       BlogLiterately-diagrams
+  main-is:             BlogLiteratelyD.hs
+  hs-source-dirs:      src/tools
+  default-language:    Haskell2010
