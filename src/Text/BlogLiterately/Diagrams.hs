@@ -84,13 +84,15 @@ renderDiagram :: [String]     -- ^ Declarations
               -> String       -- ^ Expression to render
               -> Attr         -- ^ Code attributes
               -> IO (Either String FilePath)
-renderDiagram decls expr (ident, cls, fields) = do
+renderDiagram decls expr attr@(ident, cls, fields) = do
     res <- buildDiagram
            Cairo
            (zeroV :: R2)
            (CairoOptions "default.png" size PNG)
            decls
-           expr
+           (expr ++ " {- " ++ show attr ++ " -}")
+             -- the above hack is to make sure that changing
+             -- attributes results in the diagram being recompiled.
            []
            ["Diagrams.Backend.Cairo"]
            (hashedRegenerate
