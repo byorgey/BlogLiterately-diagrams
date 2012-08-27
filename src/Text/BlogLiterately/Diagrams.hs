@@ -123,7 +123,7 @@ renderBlockDiagram defs c@(CodeBlock attr@(_, cls, _) s)
     | "dia"     `elem` tags = do
         res <- renderDiagram (src : defs) "pad 1.1 dia" attr
         case res of
-          Left  err  -> return c  -- XXX format error message?
+          Left  err  -> return (CodeBlock attr (s ++ err))
           Right file -> return $ Para [Image [] (file, "")]
 
     | otherwise = return c
