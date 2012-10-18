@@ -56,6 +56,7 @@ license-file:        LICENSE
 extra-source-files:  CHANGES
 author:              Brent Yorgey
 maintainer:          byorgey@cis.upenn.edu
+bug-reports:         http://hub.darcs.net/byorgey/BlogLiterately-diagrams/issues
 copyright:           Copyright 2012 Brent Yorgey
 category:            Web
 build-type:          Simple
@@ -63,7 +64,7 @@ cabal-version:       >=1.10
 
 source-repository head
   type:     darcs
-  location: http://code.haskell.org/~byorgey/code/BlogLiterately-diagrams
+  location: http://hub.darcs.net/byorgey/BlogLiterately-diagrams
 
 library
   default-language:    Haskell2010
