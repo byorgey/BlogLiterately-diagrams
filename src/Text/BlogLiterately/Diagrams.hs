@@ -25,6 +25,7 @@ import           Control.Arrow
 import           Data.List        (isPrefixOf)
 import qualified Data.Map as M
 import           Safe             (readMay, headDef)
+import           System.Directory (createDirectoryIfMissing)
 import           System.FilePath
 import           System.IO        (stderr, hPutStrLn)
 
@@ -100,6 +101,7 @@ renderDiagram :: [String]     -- ^ Declarations
               -> Attr         -- ^ Code attributes
               -> IO (Either String FilePath)
 renderDiagram decls expr attr@(ident, cls, fields) = do
+    createDirectoryIfMissing True diaDir
     res <- buildDiagram
            Cairo
            (zeroV :: R2)
