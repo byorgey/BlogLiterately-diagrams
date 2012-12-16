@@ -105,7 +105,7 @@ renderDiagram decls expr attr@(ident, cls, fields) = do
     res <- buildDiagram
            Cairo
            (zeroV :: R2)
-           (CairoOptions "default.png" size PNG)
+           (CairoOptions "default.png" size PNG False)
            decls
            (expr ++ " {- " ++ show attr ++ " -}")
              -- the above hack is to make sure that changing
