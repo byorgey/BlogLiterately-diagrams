@@ -1,3 +1,7 @@
+* 0.1.1.1: 24 January 2013
+
+  - allow pandoc-1.10
+
 * 0.1.1: 16 December 2012
 
   - create output directory for diagrams if missing (#1)
