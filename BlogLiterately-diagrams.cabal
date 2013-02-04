@@ -74,7 +74,7 @@ library
                        filepath,
                        directory,
                        diagrams-cairo >= 0.6 && < 0.7,
-                       diagrams-builder ==0.2.*,
+                       diagrams-builder >= 0.2 && < 0.4,
                        diagrams-lib >= 0.6 && < 0.7,
                        BlogLiterately ==0.5.*,
                        pandoc >= 1.9 && < 1.11,
