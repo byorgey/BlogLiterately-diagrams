@@ -6,8 +6,7 @@ description:         A plugin for @BlogLiterately@ (<http://hackage.haskell.org/
                      This library also provides an executable,
                      @BlogLiteratelyD@, providing a standard instance
                      of @BlogLiterately@ extended with support for
-                     inline diagrams code (and also including a pass
-                     to center block-level images).  For most users it
+                     inline diagrams code.  For most users it
                      should suffice to simply use @BlogLiteratelyD@ in
                      place of @BlogLiterately@.
                      .
@@ -74,16 +73,16 @@ library
                        filepath,
                        directory,
                        diagrams-cairo >= 0.6 && < 0.7,
-                       diagrams-builder >= 0.2 && < 0.4,
+                       diagrams-builder >= 0.2 && < 0.5,
                        diagrams-lib >= 0.6 && < 0.7,
-                       BlogLiterately ==0.5.*,
-                       pandoc >= 1.9 && < 1.11,
+                       BlogLiterately ==0.6.*,
+                       pandoc >= 1.9 && < 1.12,
                        safe ==0.3.*
   hs-source-dirs:      src
 
 executable BlogLiteratelyD
   build-depends:       base,
-                       BlogLiterately >= 0.5.2 && < 0.6,
+                       BlogLiterately >= 0.6 && < 0.7,
                        BlogLiterately-diagrams
   main-is:             BlogLiteratelyD.hs
   hs-source-dirs:      src/tools

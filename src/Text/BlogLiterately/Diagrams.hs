@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Text.BlogLiterately.Diagrams
--- Copyright   :  (c) Brent Yorgey 2012
+-- Copyright   :  (c) Brent Yorgey 2012-2013
 -- License     :  BSD-style (see LICENSE)
 -- Maintainer  :  Brent Yorgey <byorgey@gmail.com>
 --
@@ -12,9 +12,8 @@
 -- images.  See "Text.BlogLiterately.Run" for more information.
 --
 -- Note that this package provides an executable, @BlogLiteratelyD@,
--- which uses the transformation pipeline
---
--- > (diagramsInlineXF : diagramsXF : centerImagesXF : standardTransforms)
+-- which compiles embedded diagrams code as well as all the standard
+-- transforms provided by BlogLiterately.
 -----------------------------------------------------------------------------
 
 module Text.BlogLiterately.Diagrams
@@ -22,18 +21,18 @@ module Text.BlogLiterately.Diagrams
     ) where
 
 import           Control.Arrow
-import           Data.List        (isPrefixOf)
-import qualified Data.Map as M
-import           Safe             (readMay, headDef)
-import           System.Directory (createDirectoryIfMissing)
+import           Data.List                       (isPrefixOf)
+import qualified Data.Map                        as M
+import           Safe                            (headDef, readMay)
+import           System.Directory                (createDirectoryIfMissing)
 import           System.FilePath
-import           System.IO        (stderr, hPutStrLn)
+import           System.IO                       (hPutStrLn, stderr)
 
 import           Diagrams.Backend.Cairo
 import           Diagrams.Backend.Cairo.Internal
 import           Diagrams.Builder
-import           Diagrams.Prelude (R2, zeroV)
-import           Diagrams.TwoD.Size ( SizeSpec2D(Dims), mkSizeSpec )
+import           Diagrams.Prelude                (R2, zeroV)
+import           Diagrams.TwoD.Size              (SizeSpec2D (Dims), mkSizeSpec)
 import           Text.BlogLiterately
 import           Text.Pandoc
 
@@ -57,7 +56,7 @@ import           Text.Pandoc
 --   package provides an executable @BlogLiteratelyD@ which
 --   includes @diagramsInlineXF@, @diagramsXF@, and @centerImagesXF@.
 diagramsXF :: Transform
-diagramsXF = Transform (\bl -> Kleisli $ renderBlockDiagrams bl) (const True)
+diagramsXF = ioTransform renderBlockDiagrams (const True)
 
 renderBlockDiagrams :: BlogLiterately -> Pandoc -> IO Pandoc
 renderBlockDiagrams _ p = bottomUpM (renderBlockDiagram defs) p
@@ -76,7 +75,7 @@ renderBlockDiagrams _ p = bottomUpM (renderBlockDiagram defs) p
 --   @diagramsXF@ deletes them, @diagramsInlineXF@ must be placed
 --   before @diagramsXF@ in the pipeline.
 diagramsInlineXF :: Transform
-diagramsInlineXF = Transform (\bl -> Kleisli $ renderInlineDiagrams bl) (const True)
+diagramsInlineXF = ioTransform renderInlineDiagrams (const True)
 
 renderInlineDiagrams :: BlogLiterately -> Pandoc -> IO Pandoc
 renderInlineDiagrams _ p = bottomUpM (renderInlineDiagram defs) p
@@ -110,6 +109,7 @@ renderDiagram decls expr attr@(ident, cls, fields) = do
            (expr ++ " {- " ++ show attr ++ " -}")
              -- the above hack is to make sure that changing
              -- attributes results in the diagram being recompiled.
+             -- XXX can take this out once new diagrams-builder is released
            []
            ["Diagrams.Backend.Cairo"]
            (hashedRegenerate
