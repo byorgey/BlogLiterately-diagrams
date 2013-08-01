@@ -74,8 +74,8 @@ library
                        directory,
                        diagrams-cairo >= 0.6 && < 0.8,
                        diagrams-builder >= 0.2 && < 0.5,
-                       diagrams-lib >= 0.6 && < 0.8,
-                       BlogLiterately >= 0.6 && < 0.7,
+                       diagrams-lib >= 0.6 && < 0.7,
+                       BlogLiterately ==0.6.*,
                        pandoc >= 1.9 && < 1.12,
                        safe ==0.3.*
   hs-source-dirs:      src
