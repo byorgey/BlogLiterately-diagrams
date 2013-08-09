@@ -1,3 +1,7 @@
+* 0.1.2.1: 8 August 2013
+
+  - allow diagrams-lib-0.7 and diagrams-cairo-0.7
+
 * 0.1.2: 11 March 2013
 
   - update to work with BlogLiterately-0.6
