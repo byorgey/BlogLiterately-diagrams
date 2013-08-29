@@ -1,3 +1,7 @@
+* 0.1.2.2: 29 August 2013
+
+  - code cleanup, and move repository to github
+
 * 0.1.2.1: 8 August 2013
 
   - allow diagrams-lib-0.7 and diagrams-cairo-0.7
