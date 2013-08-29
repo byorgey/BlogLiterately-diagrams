@@ -20,19 +20,16 @@ module Text.BlogLiterately.Diagrams
     ( diagramsXF, diagramsInlineXF
     ) where
 
-import           Control.Arrow
-import           Data.List                       (isPrefixOf)
-import qualified Data.Map                        as M
-import           Safe                            (headDef, readMay)
+import           Safe                            (readMay)
 import           System.Directory                (createDirectoryIfMissing)
 import           System.FilePath
 import           System.IO                       (hPutStrLn, stderr)
 
 import           Diagrams.Backend.Cairo
 import           Diagrams.Backend.Cairo.Internal
-import           Diagrams.Builder
+import qualified Diagrams.Builder                as DB
 import           Diagrams.Prelude                (R2, zeroV)
-import           Diagrams.TwoD.Size              (SizeSpec2D (Dims), mkSizeSpec)
+import           Diagrams.TwoD.Size              (mkSizeSpec)
 import           Text.BlogLiterately
 import           Text.Pandoc
 
@@ -88,8 +85,9 @@ extractDiaDef (CodeBlock (_, as, _) s)
   where
     (tag, src) = unTag s
 
-extractDiaDef b = []
+extractDiaDef _ = []
 
+diaDir :: FilePath
 diaDir = "diagrams"  -- XXX make this configurable
 
 -- | Given some code with declarations, some attributes, and an
@@ -99,9 +97,9 @@ renderDiagram :: [String]     -- ^ Declarations
               -> String       -- ^ Expression to render
               -> Attr         -- ^ Code attributes
               -> IO (Either String FilePath)
-renderDiagram decls expr attr@(ident, cls, fields) = do
+renderDiagram decls expr attr@(_ident, _cls, fields) = do
     createDirectoryIfMissing True diaDir
-    res <- buildDiagram
+    res <- DB.buildDiagram
            Cairo
            (zeroV :: R2)
            (CairoOptions "default.png" size PNG False)
@@ -112,21 +110,21 @@ renderDiagram decls expr attr@(ident, cls, fields) = do
              -- XXX can take this out once new diagrams-builder is released
            []
            ["Diagrams.Backend.Cairo"]
-           (hashedRegenerate
+           (DB.hashedRegenerate
              (\hash opts -> opts { cairoFileName = mkFile hash })
              diaDir
            )
     case res of
-      ParseErr err    -> do
+      DB.ParseErr err    -> do
         let errStr = "\nParse error:\n" ++ err
         putErrLn errStr
         return (Left errStr)
-      InterpErr ierr  -> do
-        let errStr = "\nInterpreter error:\n" ++ ppInterpError ierr
+      DB.InterpErr ierr  -> do
+        let errStr = "\nInterpreter error:\n" ++ DB.ppInterpError ierr
         putErrLn errStr
         return (Left errStr)
-      Skipped hash    ->        return (Right $ mkFile hash)
-      OK hash (act,_) -> act >> return (Right $ mkFile hash)
+      DB.Skipped hash    ->        return (Right $ mkFile hash)
+      DB.OK hash (act,_) -> act >> return (Right $ mkFile hash)
 
   where
     size        = mkSizeSpec
@@ -136,18 +134,18 @@ renderDiagram decls expr attr@(ident, cls, fields) = do
 
 renderBlockDiagram :: [String] -> Block -> IO Block
 renderBlockDiagram defs c@(CodeBlock attr@(_, cls, _) s)
-    | "dia-def" `elem` tags = return Null
-    | "dia"     `elem` tags = do
+    | "dia-def" `elem` classTags = return Null
+    | "dia"     `elem` classTags = do
         res <- renderDiagram (src : defs) "pad 1.1 dia" attr
         case res of
-          Left  err  -> return (CodeBlock attr (s ++ err))
-          Right file -> return $ Para [Image [] (file, "")]
+          Left  err      -> return (CodeBlock attr (s ++ err))
+          Right fileName -> return $ Para [Image [] (fileName, "")]
 
     | otherwise = return c
 
   where
     (tag, src)        = unTag s
-    tags              = (maybe id (:) tag) cls
+    classTags         = (maybe id (:) tag) cls
 
 renderBlockDiagram _ b = return b
 
@@ -156,8 +154,8 @@ renderInlineDiagram defs c@(Code attr@(_, cls, _) expr)
     | "dia" `elem` cls = do
         res <- renderDiagram defs expr attr
         case res of
-          Left err   -> return (Code attr (expr ++ err))
-          Right file -> return $ Image [] (file, "")
+          Left err       -> return (Code attr (expr ++ err))
+          Right fileName -> return $ Image [] (fileName, "")
     | otherwise = return c
 
 renderInlineDiagram _ i = return i
