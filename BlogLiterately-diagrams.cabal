@@ -55,7 +55,7 @@ license-file:        LICENSE
 extra-source-files:  CHANGES
 author:              Brent Yorgey
 maintainer:          byorgey@cis.upenn.edu
-bug-reports:         http://hub.darcs.net/byorgey/BlogLiterately-diagrams/issues
+bug-reports:         http://github.com/byorgey/BlogLiterately-diagrams/issues
 copyright:           Copyright 2012 Brent Yorgey
 category:            Web
 build-type:          Simple
