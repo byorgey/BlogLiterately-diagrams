@@ -75,14 +75,14 @@ library
                        diagrams-cairo >= 0.6 && < 0.8,
                        diagrams-builder >= 0.2 && < 0.5,
                        diagrams-lib >= 0.6 && < 0.8,
-                       BlogLiterately >= 0.6 && < 0.7,
+                       BlogLiterately >= 0.6 && < 0.8,
                        pandoc >= 1.9 && < 1.13,
                        safe ==0.3.*
   hs-source-dirs:      src
 
 executable BlogLiteratelyD
   build-depends:       base,
-                       BlogLiterately >= 0.6 && < 0.7,
+                       BlogLiterately >= 0.6 && < 0.8,
                        BlogLiterately-diagrams
   main-is:             BlogLiteratelyD.hs
   hs-source-dirs:      src/tools
