@@ -1,3 +1,8 @@
+* 0.1.2.4: 2 November 2013
+
+  - allow BlogLiterately-0.7
+  - allow base-4.7
+
 * 0.1.2.3: 2 October 2013
 
   - allow pandoc-1.12
