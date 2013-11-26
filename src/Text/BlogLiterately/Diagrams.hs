@@ -28,7 +28,7 @@ import           System.IO                       (hPutStrLn, stderr)
 import           Diagrams.Backend.Cairo
 import           Diagrams.Backend.Cairo.Internal
 import qualified Diagrams.Builder                as DB
-import           Diagrams.Prelude                (R2, zeroV)
+import           Diagrams.Prelude                (R2, zeroV, (&), (.~))
 import           Diagrams.TwoD.Size              (mkSizeSpec)
 import           Text.BlogLiterately
 import           Text.Pandoc
@@ -111,7 +111,7 @@ renderDiagram decls expr attr@(_ident, _cls, fields) = do
            []
            ["Diagrams.Backend.Cairo"]
            (DB.hashedRegenerate
-             (\hash opts -> opts { cairoFileName = mkFile hash })
+             (\hash opts -> opts & cairoFileName .~ mkFile hash)
              diaDir
            )
     case res of
