@@ -1,3 +1,9 @@
+* 0.1.3.1: 29 November 2013
+
+  - Update documentation: doesn't actually support IO actions yet
+    (that will require some further forthcoming changes to
+    diagrams-builder).
+
 * 0.1.3: 26 November 2013
 
   - require diagrams-builder-0.4.2, which adds support for IO actions
