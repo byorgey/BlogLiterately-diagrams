@@ -16,4 +16,14 @@ import Test
 dia = foo ||| foo
 ```
 
+Here's a diagram that uses IO:
+
+```{.dia width='200'}
+import Control.Monad.Random
+dia :: IO (Diagram Cairo R2)
+dia = do
+  n <- evalRandIO (getRandomR (1,6))
+  return (regPoly n 1 # fc blue)
+```
+
 The end.
