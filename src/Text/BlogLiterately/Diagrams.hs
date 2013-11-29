@@ -104,10 +104,7 @@ renderDiagram decls expr attr@(_ident, _cls, fields) = do
            (zeroV :: R2)
            (CairoOptions "default.png" size PNG False)
            decls
-           (expr ++ " {- " ++ show attr ++ " -}")
-             -- the above hack is to make sure that changing
-             -- attributes results in the diagram being recompiled.
-             -- XXX can take this out once new diagrams-builder is released
+           expr
            []
            ["Diagrams.Backend.Cairo"]
            (DB.hashedRegenerate
