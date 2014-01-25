@@ -28,7 +28,8 @@ import           System.IO                       (hPutStrLn, stderr)
 import           Diagrams.Backend.Cairo
 import           Diagrams.Backend.Cairo.Internal
 import qualified Diagrams.Builder                as DB
-import           Diagrams.Prelude                (R2, zeroV, (&), (.~))
+import           Diagrams.Prelude                (centerXY, pad, zeroV, (&),
+                                                  (.~))
 import           Diagrams.TwoD.Size              (mkSizeSpec)
 import           Text.BlogLiterately
 import           Text.Pandoc
@@ -93,24 +94,26 @@ diaDir = "diagrams"  -- XXX make this configurable
 -- | Given some code with declarations, some attributes, and an
 --   expression to render, render it and return the filename of the
 --   generated image (or an error message).
-renderDiagram :: [String]     -- ^ Declarations
+renderDiagram :: Bool         -- ^ Apply padding automatically?
+              -> [String]     -- ^ Declarations
               -> String       -- ^ Expression to render
               -> Attr         -- ^ Code attributes
               -> IO (Either String FilePath)
-renderDiagram decls expr attr@(_ident, _cls, fields) = do
+renderDiagram shouldPad decls expr (_ident, _cls, fields) = do
     createDirectoryIfMissing True diaDir
-    res <- DB.buildDiagram
-           Cairo
-           (zeroV :: R2)
-           (CairoOptions "default.png" size PNG False)
-           decls
-           expr
-           []
-           ["Diagrams.Backend.Cairo"]
-           (DB.hashedRegenerate
-             (\hash opts -> opts & cairoFileName .~ mkFile hash)
-             diaDir
-           )
+
+    let bopts = DB.mkBuildOpts Cairo zeroV (CairoOptions "default.png" size PNG False)
+                  & DB.snippets .~ decls
+                  & DB.imports  .~ ["Diagrams.Backend.Cairo"]
+                  & DB.diaExpr  .~ expr
+                  & DB.postProcess .~ (if shouldPad then pad 1.1 . centerXY else id)
+                  & DB.decideRegen .~
+                      (DB.hashedRegenerate
+                        (\hash opts -> opts & cairoFileName .~ mkFile hash)
+                        diaDir
+                      )
+    res <- DB.buildDiagram bopts
+
     case res of
       DB.ParseErr err    -> do
         let errStr = "\nParse error:\n" ++ err
@@ -120,8 +123,8 @@ renderDiagram decls expr attr@(_ident, _cls, fields) = do
         let errStr = "\nInterpreter error:\n" ++ DB.ppInterpError ierr
         putErrLn errStr
         return (Left errStr)
-      DB.Skipped hash    ->        return (Right $ mkFile hash)
-      DB.OK hash (act,_) -> act >> return (Right $ mkFile hash)
+      DB.Skipped hash    ->        return (Right $ mkFile (DB.hashToHexStr hash))
+      DB.OK hash (act,_) -> act >> return (Right $ mkFile (DB.hashToHexStr hash))
 
   where
     size        = mkSizeSpec
@@ -133,7 +136,7 @@ renderBlockDiagram :: [String] -> Block -> IO Block
 renderBlockDiagram defs c@(CodeBlock attr@(_, cls, _) s)
     | "dia-def" `elem` classTags = return Null
     | "dia"     `elem` classTags = do
-        res <- renderDiagram (src : defs) "pad 1.1 dia" attr
+        res <- renderDiagram True (src : defs) "dia" attr
         case res of
           Left  err      -> return (CodeBlock attr (s ++ err))
           Right fileName -> return $ Para [Image [] (fileName, "")]
@@ -149,7 +152,7 @@ renderBlockDiagram _ b = return b
 renderInlineDiagram :: [String] -> Inline -> IO Inline
 renderInlineDiagram defs c@(Code attr@(_, cls, _) expr)
     | "dia" `elem` cls = do
-        res <- renderDiagram defs expr attr
+        res <- renderDiagram False defs expr attr
         case res of
           Left err       -> return (Code attr (expr ++ err))
           Right fileName -> return $ Image [] (fileName, "")

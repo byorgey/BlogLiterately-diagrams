@@ -22,7 +22,7 @@ Here's a diagram that uses IO:
 import Control.Monad.Random
 dia :: IO (Diagram Cairo R2)
 dia = do
-  n <- evalRandIO (getRandomR (1,6))
+  n <- evalRandIO (getRandomR (3,8))
   return (regPoly n 1 # fc blue)
 ```
 
