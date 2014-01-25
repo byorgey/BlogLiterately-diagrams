@@ -50,6 +50,13 @@ description:         A plugin for @BlogLiterately@ (<http://hackage.haskell.org/
                      this:
                      .
                      <<http://projects.haskell.org/diagrams/hosted/BLD-post-result.png>>
+                     .
+                     In addition to simple diagrams, @IO@ actions
+                     producing diagrams may also be used.  In that
+                     case the @IO@ action will simply be run, and the
+                     resulting diagram rendered.  This can be useful,
+                     for example, when producing a diagram built from
+                     some external data or using randomness.
 license:             BSD3
 license-file:        LICENSE
 extra-source-files:  CHANGES
