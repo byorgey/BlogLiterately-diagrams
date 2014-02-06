@@ -1,3 +1,8 @@
+* 0.1.4.1: 6 February 2014
+
+  - Require diagrams-lib >= 1.0.1
+  - Require diagrams-cairo >= 1.0.1
+
 * 0.1.4: 27 January 2014
 
   - Require diagrams-builder-0.5, which really actually adds support
