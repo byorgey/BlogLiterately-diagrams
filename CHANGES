@@ -1,3 +1,7 @@
+* 0.1.4.2: 9 March 2014
+
+  - Allow diagrams-lib-1.1 and diagrams-cairo-1.1
+
 * 0.1.4.1: 6 February 2014
 
   - Require diagrams-lib >= 1.0.1
