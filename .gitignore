@@ -10,3 +10,6 @@ dist_*
 .hsenv_*
 TAGS
 test/diagrams/*.png
+
+.cabal-sandbox
+cabal.sandbox.config
