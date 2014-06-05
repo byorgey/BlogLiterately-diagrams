@@ -1,3 +1,9 @@
+* 0.1.4.3 (5 June 2014)
+
+  - Allow diagrams-lib-1.2
+  - Allow diagrams-cairo-1.2
+  - Allow diagrams-builder-0.6
+
 * 0.1.4.2: 9 March 2014
 
   - Allow diagrams-lib-1.1 and diagrams-cairo-1.1
