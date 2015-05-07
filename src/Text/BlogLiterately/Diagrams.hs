@@ -20,17 +20,17 @@ module Text.BlogLiterately.Diagrams
     ( diagramsXF, diagramsInlineXF
     ) where
 
-import           Safe                            (readMay)
-import           System.Directory                (createDirectoryIfMissing)
+import           Safe                        (readMay)
+import           System.Directory            (createDirectoryIfMissing)
 import           System.FilePath
-import           System.IO                       (hPutStrLn, stderr)
+import           System.IO                   (hPutStrLn, stderr)
 
-import           Diagrams.Backend.Cairo
-import           Diagrams.Backend.Cairo.Internal
-import qualified Diagrams.Builder                as DB
-import           Diagrams.Prelude                (centerXY, pad, zeroV, (&),
-                                                  (.~))
-import           Diagrams.TwoD.Size              (mkSizeSpec)
+import qualified Codec.Picture               as J
+import           Diagrams.Backend.Rasterific
+import qualified Diagrams.Builder            as DB
+import           Diagrams.Prelude            (SizeSpec, V2, centerXY, pad, zero,
+                                              (&), (.~))
+import           Diagrams.TwoD.Size          (mkSizeSpec2D)
 import           Text.BlogLiterately
 import           Text.Pandoc
 
@@ -102,16 +102,17 @@ renderDiagram :: Bool         -- ^ Apply padding automatically?
 renderDiagram shouldPad decls expr (_ident, _cls, fields) = do
     createDirectoryIfMissing True diaDir
 
-    let bopts = DB.mkBuildOpts Cairo zeroV (CairoOptions "default.png" size PNG False)
+    let bopts = DB.mkBuildOpts Rasterific zero (RasterificOptions sz)
                   & DB.snippets .~ decls
-                  & DB.imports  .~ ["Diagrams.Backend.Cairo"]
+                  & DB.imports  .~ ["Diagrams.Backend.Rasterific"]
                   & DB.diaExpr  .~ expr
                   & DB.postProcess .~ (if shouldPad then pad 1.1 . centerXY else id)
                   & DB.decideRegen .~
                       (DB.hashedRegenerate
-                        (\hash opts -> opts & cairoFileName .~ mkFile hash)
+                        (\_ opts -> opts)
                         diaDir
                       )
+
     res <- DB.buildDiagram bopts
 
     case res of
@@ -123,13 +124,17 @@ renderDiagram shouldPad decls expr (_ident, _cls, fields) = do
         let errStr = "\nInterpreter error:\n" ++ DB.ppInterpError ierr
         putErrLn errStr
         return (Left errStr)
-      DB.Skipped hash    ->        return (Right $ mkFile (DB.hashToHexStr hash))
-      DB.OK hash (act,_) -> act >> return (Right $ mkFile (DB.hashToHexStr hash))
+      DB.Skipped hash    -> return (Right $ mkFile (DB.hashToHexStr hash))
+      DB.OK hash img     -> do
+        let imgFile = mkFile (DB.hashToHexStr hash)
+        J.savePngImage imgFile (J.ImageRGBA8 img)
+        return (Right imgFile)
 
   where
-    size        = mkSizeSpec
-                    (lookup "width" fields >>= readMay)
-                    (lookup "height" fields >>= readMay)
+    sz :: SizeSpec V2 Double
+    sz        = mkSizeSpec2D
+                  (lookup "width" fields >>= readMay)
+                  (lookup "height" fields >>= readMay)
     mkFile base = diaDir </> base <.> "png"
 
 renderBlockDiagram :: [String] -> Block -> IO Block
