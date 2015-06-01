@@ -83,14 +83,14 @@ library
                        diagrams-rasterific >= 1.3 && < 1.4,
                        JuicyPixels         >= 3.2 && < 3.3,
                        diagrams-builder    >= 0.5 && < 0.8,
-                       BlogLiterately      >= 0.6 && < 0.8,
-                       pandoc              >= 1.9 && < 1.14,
+                       BlogLiterately      >= 0.6 && < 0.9,
+                       pandoc              >= 1.9 && < 1.15,
                        safe ==0.3.*
   hs-source-dirs:      src
 
 executable BlogLiteratelyD
   build-depends:       base,
-                       BlogLiterately >= 0.6 && < 0.8,
+                       BlogLiterately >= 0.6 && < 0.9,
                        BlogLiterately-diagrams
   main-is:             BlogLiteratelyD.hs
   hs-source-dirs:      src/tools
