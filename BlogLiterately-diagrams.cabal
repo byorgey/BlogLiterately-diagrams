@@ -95,3 +95,4 @@ executable BlogLiteratelyD
   main-is:             BlogLiteratelyD.hs
   hs-source-dirs:      src/tools
   default-language:    Haskell2010
+  ghc-options:         -threaded
