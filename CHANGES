@@ -1,3 +1,7 @@
+* 0.2.0.1 (11 July 2015)
+
+  - Allow pandoc-1.15
+
 * 0.2 (7 May 2015)
 
   - Switch from diagrams-cairo to diagrams-rasterific
