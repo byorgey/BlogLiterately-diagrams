@@ -144,7 +144,7 @@ renderBlockDiagram defs c@(CodeBlock attr@(_, cls, _) s)
         res <- renderDiagram True (src : defs) "dia" attr
         case res of
           Left  err      -> return (CodeBlock attr (s ++ err))
-          Right fileName -> return $ Para [Image [] (fileName, "")]
+          Right fileName -> return $ Para [Image nullAttr [] (fileName, "")]
 
     | otherwise = return c
 
@@ -160,7 +160,7 @@ renderInlineDiagram defs c@(Code attr@(_, cls, _) expr)
         res <- renderDiagram False defs expr attr
         case res of
           Left err       -> return (Code attr (expr ++ err))
-          Right fileName -> return $ Image [] (fileName, "")
+          Right fileName -> return $ Image nullAttr [] (fileName, "")
     | otherwise = return c
 
 renderInlineDiagram _ i = return i
