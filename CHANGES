@@ -1,3 +1,12 @@
+* 0.2.0.4 (28 November 2016)
+
+updates for diagrams-1.4 etc:
+
+  - allow `diagrams-lib-1.4`
+  - allow `diagrams-rasterific-1.4`
+  - allow `diagrams-builder-0.8`
+  - allow `pandoc-1.18`
+
 * 0.2.0.3 (22 March 2016)
 
   - Allow pandoc-1.17
