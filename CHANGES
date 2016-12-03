@@ -1,3 +1,8 @@
+* 0.2.0.5 (3 December 2016)
+
+  - allow `base-4.9`
+  - allow `pandoc-1.19`
+
 * 0.2.0.4 (28 November 2016)
 
 updates for diagrams-1.4 etc:
