@@ -75,7 +75,7 @@ source-repository head
 library
   default-language:    Haskell2010
   exposed-modules:     Text.BlogLiterately.Diagrams
-  build-depends:       base >= 4.3 && < 4.10,
+  build-depends:       base >= 4.3 && < 4.11,
                        containers,
                        filepath,
                        directory,
@@ -84,7 +84,7 @@ library
                        JuicyPixels         >= 3.2 && < 3.3,
                        diagrams-builder    >= 0.5 && < 0.9,
                        BlogLiterately      >= 0.6 && < 0.9,
-                       pandoc              >= 1.16 && < 1.20,
+                       pandoc              >= 1.16 && < 2.2,
                        safe ==0.3.*
   hs-source-dirs:      src
 
