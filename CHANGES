@@ -1,3 +1,8 @@
+* 0.2.0.6 (18 February 2018)
+
+  - allow `base-4.10`
+  - allow `pandoc-2.1`
+
 * 0.2.0.5 (3 December 2016)
 
   - allow `base-4.9`
