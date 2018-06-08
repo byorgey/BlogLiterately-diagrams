@@ -66,7 +66,9 @@ bug-reports:         http://github.com/byorgey/BlogLiterately-diagrams/issues
 copyright:           Copyright 2012-2015 Brent Yorgey
 category:            Web
 build-type:          Simple
-cabal-version:       >=1.10
+cabal-version:       1.18
+tested-with:         GHC == 8.0.2, GHC == 8.2.2, GHC == 8.4.2
+
 
 source-repository head
   type:     git
