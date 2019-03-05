@@ -1,3 +1,9 @@
+* 0.2.1 (5 March 2019)
+
+  - allow `base-4.12`, `pandoc-2.7`, `JuicyPixels-3.3`
+  - Add extra options to allow specifying size and destination for
+    generated images
+
 * 0.2.0.6 (18 February 2018)
 
   - allow `base-4.10`
