@@ -85,7 +85,7 @@ library
                        JuicyPixels         >= 3.2 && < 3.4,
                        diagrams-builder    >= 0.5 && < 0.9,
                        BlogLiterately      >= 0.6 && < 0.9,
-                       pandoc              >= 2.0 && < 2.11,
+                       pandoc              >= 2.8 && < 2.11,
                        safe                ==0.3.*,
                        split               >= 0.2 && < 0.3
   hs-source-dirs:      src
