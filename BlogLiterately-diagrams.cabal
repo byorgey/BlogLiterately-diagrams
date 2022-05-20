@@ -67,7 +67,7 @@ copyright:           Copyright 2012-2015 Brent Yorgey
 category:            Web
 build-type:          Simple
 cabal-version:       1.18
-tested-with:         GHC ==8.0.2 || ==8.2.2 || ==8.4.4 || ==8.6.5 || ==8.8.3 || ==8.10.1
+tested-with:         GHC ==8.6.5 || ==8.8.4 || ==8.10.7 || ==9.0.2 || ==9.2.1
 
 source-repository head
   type:     git
@@ -76,7 +76,7 @@ source-repository head
 library
   default-language:    Haskell2010
   exposed-modules:     Text.BlogLiterately.Diagrams
-  build-depends:       base >= 4.3 && < 4.15,
+  build-depends:       base >= 4.3 && < 4.17,
                        containers,
                        filepath,
                        directory,
@@ -85,7 +85,7 @@ library
                        JuicyPixels         >= 3.2 && < 3.4,
                        diagrams-builder    >= 0.5 && < 0.9,
                        BlogLiterately      >= 0.6 && < 0.9,
-                       pandoc              >= 2.8 && < 2.11,
+                       pandoc              >= 2.8 && < 2.19,
                        safe                ==0.3.*,
                        split               >= 0.2 && < 0.3
   hs-source-dirs:      src
