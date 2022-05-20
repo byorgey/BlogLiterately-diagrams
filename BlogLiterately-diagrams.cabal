@@ -1,5 +1,5 @@
 name:                BlogLiterately-diagrams
-version:             0.2.1
+version:             0.2.2
 synopsis:            Include images in blog posts with inline diagrams code
 description:         A plugin for @BlogLiterately@ (<http://hackage.haskell.org/package/BlogLiterately>) which turns inline diagrams
                      code into images.
