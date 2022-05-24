@@ -35,7 +35,6 @@ import           Data.Maybe                  (fromMaybe)
 import           Data.Text                   (Text)
 import qualified Data.Text                   as T
 import qualified Data.Text.IO                as T
-import           Witch                       (from, into)
 
 import           Diagrams.Backend.Rasterific
 import qualified Diagrams.Builder            as DB
@@ -122,9 +121,9 @@ renderDiagram shouldPad decls expr sz mdir = do
     createDirectoryIfMissing True diaDir
 
     let bopts = DB.mkBuildOpts Rasterific zero (RasterificOptions sz)
-                  & DB.snippets .~ map (from @Text) decls
+                  & DB.snippets .~ map T.unpack decls
                   & DB.imports  .~ ["Diagrams.Backend.Rasterific"]
-                  & DB.diaExpr  .~ from @Text expr
+                  & DB.diaExpr  .~ T.unpack expr
                   & DB.postProcess .~ (if shouldPad then pad 1.1 . centerXY else id)
                   & DB.decideRegen .~
                       (DB.hashedRegenerate
@@ -136,11 +135,11 @@ renderDiagram shouldPad decls expr sz mdir = do
 
     case res of
       DB.ParseErr err    -> do
-        let errStr = T.append "\nParse error:\n" (into @Text err)
+        let errStr = T.append "\nParse error:\n" (T.pack err)
         putErrLn errStr
         return (Left errStr)
       DB.InterpErr ierr  -> do
-        let errStr = T.append "\nInterpreter error:\n" (into @Text (DB.ppInterpError ierr))
+        let errStr = T.append "\nInterpreter error:\n" (T.pack (DB.ppInterpError ierr))
         putErrLn errStr
         return (Left errStr)
       DB.Skipped hash    -> return (Right $ mkFile (DB.hashToHexStr hash))
@@ -166,7 +165,7 @@ renderBlockDiagram ximgDir ximgSize defs c@(CodeBlock attr@(_, cls, fields) s)
                 _ <- renderDiagram True (src : defs) "dia" sz ximgDir
                 return ()
               _                 -> return ()
-            return $ Para [Image nullAttr [] (into @Text fileName, "")]
+            return $ Para [Image nullAttr [] (T.pack fileName, "")]
 
     | otherwise = return c
 
@@ -183,7 +182,7 @@ renderInlineDiagram defs c@(Code attr@(_, cls, fields) expr)
         res <- renderDiagram False defs expr (attrToSize fields) Nothing
         case res of
           Left err       -> return (Code attr (T.append expr err))
-          Right fileName -> return $ Image nullAttr [] (into @Text fileName, "")
+          Right fileName -> return $ Image nullAttr [] (T.pack fileName, "")
     | otherwise = return c
 
 renderInlineDiagram _ i = return i
@@ -191,8 +190,8 @@ renderInlineDiagram _ i = return i
 attrToSize :: [(Text, Text)] -> SizeSpec V2 Double
 attrToSize fields
   = mkSizeSpec2D
-    (lookup "width" fields >>= (readMay . from @Text))
-    (lookup "height" fields >>= (readMay . from @Text))
+    (lookup "width" fields >>= (readMay . T.unpack))
+    (lookup "height" fields >>= (readMay . T.unpack))
 
 
 putErrLn :: Text -> IO ()

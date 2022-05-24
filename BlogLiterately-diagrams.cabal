@@ -88,8 +88,7 @@ library
                        pandoc              >= 2.8 && < 2.19,
                        safe                ==0.3.*,
                        split               >= 0.2 && < 0.3,
-                       text                >= 1.2 && < 2.1,
-                       witch               >= 1.0 && < 1.1
+                       text                >= 1.2 && < 2.1
   hs-source-dirs:      src
 
 executable BlogLiteratelyD
