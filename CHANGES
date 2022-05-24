@@ -1,3 +1,9 @@
+* 0.3 (24 May 2022)
+
+  - allow `base-4.16`
+  - Update to work with `pandoc` versions 2.8 through 2.18
+  - Update to work with latest `BlogLiterately`
+
 * 0.2.1 (5 March 2019)
 
   - allow `base-4.12`, `pandoc-2.7`, `JuicyPixels-3.3`
