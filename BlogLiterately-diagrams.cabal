@@ -67,7 +67,7 @@ copyright:           Copyright 2012-2022 Brent Yorgey
 category:            Web
 build-type:          Simple
 cabal-version:       1.18
-tested-with:         GHC ==8.6.5 || ==8.8.4 || ==8.10.7 || ==9.0.2 || ==9.2.1
+tested-with:         GHC ==8.6.5 || ==8.8.4 || ==8.10.7 || ==9.0.2 || ==9.2.7
 
 source-repository head
   type:     git
@@ -85,7 +85,7 @@ library
                        JuicyPixels         >= 3.2 && < 3.4,
                        diagrams-builder    >= 0.5 && < 0.9,
                        BlogLiterately      >= 0.8.7 && < 0.9,
-                       pandoc              >= 2.8 && < 2.19,
+                       pandoc              >= 2.8 && < 3.2,
                        safe                ==0.3.*,
                        split               >= 0.2 && < 0.3,
                        text                >= 1.2 && < 2.1
