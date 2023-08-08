@@ -76,7 +76,7 @@ source-repository head
 library
   default-language:    Haskell2010
   exposed-modules:     Text.BlogLiterately.Diagrams
-  build-depends:       base >= 4.3 && < 4.17,
+  build-depends:       base >= 4.3 && < 4.19,
                        containers,
                        filepath,
                        directory,
