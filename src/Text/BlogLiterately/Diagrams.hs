@@ -152,29 +152,28 @@ renderDiagram shouldPad decls expr sz mdir = do
     diaDir = fromMaybe "diagrams" mdir
     mkFile base = diaDir </> base <.> "png"
 
-renderBlockDiagram :: Maybe FilePath -> Maybe (SizeSpec V2 Double) -> [Text] -> Block -> IO Block
-renderBlockDiagram ximgDir ximgSize defs c@(CodeBlock attr@(_, cls, fields) s)
-    | "dia-def" `elem` classTags = return Null
+renderBlockDiagram :: Maybe FilePath -> Maybe (SizeSpec V2 Double) -> [Text] -> [Block] -> IO [Block]
+renderBlockDiagram ximgDir ximgSize defs blocks = concat <$> mapM renderOne blocks
+ where
+  renderOne c@(CodeBlock attr@(_, cls, fields) s)
+    | "dia-def" `elem` classTags = return []
     | "dia"     `elem` classTags = do
         res <- renderDiagram True (src : defs) "dia" (attrToSize fields) Nothing
         case res of
-          Left  err      -> return (CodeBlock attr (T.append s err))
+          Left  err      -> return [CodeBlock attr (T.append s err)]
           Right fileName -> do
             case (ximgDir, ximgSize) of
               (Just _, Just sz) -> do
                 _ <- renderDiagram True (src : defs) "dia" sz ximgDir
                 return ()
               _                 -> return ()
-            return $ Para [Image nullAttr [] (T.pack fileName, "")]
+            return [Para [Image nullAttr [] (T.pack fileName, "")]]
+    | otherwise = return [c]
 
-    | otherwise = return c
-
-  where
-    (tag, src)        = unTag s
-    classTags         = (maybe id (:) tag) cls
-
-
-renderBlockDiagram _ _ _ b = return b
+    where
+      (tag, src) = unTag s
+      classTags  = (maybe id (:) tag) cls
+  renderOne b = return [b]
 
 renderInlineDiagram :: [Text] -> Inline -> IO Inline
 renderInlineDiagram defs c@(Code attr@(_, cls, fields) expr)
