@@ -67,7 +67,7 @@ copyright:           Copyright 2012-2022 Brent Yorgey
 category:            Web
 build-type:          Simple
 cabal-version:       1.18
-tested-with:         GHC ==8.6.5 || ==8.8.4 || ==8.10.7 || ==9.0.2 || ==9.2.7 || ==9.4.5 || ==9.6.1
+tested-with:         GHC ==8.6.5 || ==8.8.4 || ==8.10.7 || ==9.0.2 || ==9.2.7 || ==9.4.5
 
 source-repository head
   type:     git
@@ -76,7 +76,7 @@ source-repository head
 library
   default-language:    Haskell2010
   exposed-modules:     Text.BlogLiterately.Diagrams
-  build-depends:       base >= 4.3 && < 4.19,
+  build-depends:       base >= 4.3 && < 4.18,
                        containers,
                        filepath,
                        directory,
