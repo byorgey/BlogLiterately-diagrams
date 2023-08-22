@@ -1,7 +1,8 @@
-* 0.3.0.1 (19 Aug 2023)
+* 0.3.1 (22 Aug 2023)
 
   - allow `base-4.17` / GHC 9.4
   - Update to work with `pandoc` up through 3.1
+  - Require at least `pandoc` 2.19.1
 
 * 0.3 (24 May 2022)
 
